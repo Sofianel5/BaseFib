@@ -3,43 +3,56 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
+TABLE_LOOKUP = True
+FIBS = [0, 1]
+
 def deconstructN(fibs, n):
      left = n
      idxs = []
      while left > 0:
-             if fibs[-1] <= left:
-                     idxs.append(len(fibs) - 1)
-                     left -= fibs[-1]
-             fibs.pop()
+            if fibs[-1] <= left:
+                idxs.append(len(fibs) - 1)
+                left -= fibs[-1]
+            fibs.pop()
      return idxs
 
 def constructFib(idxs):
      s = ""
      end = idxs[0]+1
      for i in range(end):
-             if idxs[-1] == i:
-                     s += "1"
-                     idxs.pop()
-             else:
-                     s += "0"
+        if idxs[-1] == i:
+            s += "1"
+            idxs.pop()
+        else:
+            s += "0"
      return s[::-1]
 
+def computeFibs(n):
+    fibs = [0, 1]
+    while fibs[-1] < n:
+        fibs.append(fibs[-1] + fibs[-2])
+    return fibs
+
+def computeFibsMemo(n):
+    global FIBS
+    while FIBS[-1] < n:
+        FIBS.append(FIBS[-1] + FIBS[-2])
+    return FIBS
+
 def dec2fib(n):
-     fibs = [0, 1]
-     while fibs[-1] < n:
-             fibs.append(fibs[-1] + fibs[-2])
-     idxs = deconstructN(fibs, n)
+     fibs = computeFibsMemo(n) if TABLE_LOOKUP else computeFibs(n)
+     idxs = deconstructN(fibs.copy(), n)
      if idxs:
-             return constructFib(idxs)
+        return constructFib(idxs)
      return "0"
 
 def fib2dec(fibnum):
      if len(fibnum) == 1:
-            return 0
+        return 0
      l = [(fibnum[-1] == '1', 0), (fibnum[-2] == '1', 1)]
      for i, c in enumerate(fibnum[::-1]):
-             if i > 1:
-                     l.append((c == '1', l[i-1][1] + l[i-2][1]))
+        if i > 1:
+            l.append((c == '1', l[i-1][1] + l[i-2][1]))
      return sum([pos*val for pos,val in l])
 
 def addFibs(fib1, fib2):
@@ -63,7 +76,7 @@ if __name__ == "__main__":
                 print("ERROR: {} + {} != {}".format(dec2fib(i), dec2fib(j), dec2fib(i+j)))
 
     # Graph addition time as function of number of digits
-    x = np.arange(1, 200, 1)
+    x = np.arange(1, 5000, 1)
     y = []
     for i in x:
         a = randomFib(i)
