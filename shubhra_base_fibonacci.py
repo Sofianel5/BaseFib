@@ -37,6 +37,7 @@ def update_ans(i, ans):
 def add(s1, s2):
     s1, s2 = to_arr_pad(s1, s2)
     # print(s1, s2)
+    # creates blank arrary of 0
     ans = [0] * len(s1)
     unsolved = True
     count = 0
